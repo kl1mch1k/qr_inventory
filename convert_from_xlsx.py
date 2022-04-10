@@ -1,48 +1,66 @@
+from openpyxl import load_workbook
+from openpyxl.utils import column_index_from_string
+import sqlite3
+
 def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_rows_with_id_only=True):
-    from openpyxl import load_workbook
-    from openpyxl.utils import column_index_from_string
-    import sqlite3
-    import os
     # Loading a workbook and required sheet
-    try:
-        wb = load_workbook(xlsx_name, read_only=True)
-        sheet = wb[sheet_name]
-        if db_name in os.listdir():
-            raise FileExistsError
+    wb = load_workbook(xlsx_name, read_only=True)
+    sheet = wb[sheet_name]
+    if db_name in os.listdir():
+        raise FileExistsError
 
-        # Creating a database and cursor
-        con = sqlite3.connect(db_name)  # Creating a database and cursor
-        cur = con.cursor()
+    # Creating a database and cursor
+    con = sqlite3.connect(db_name)  # Creating a database and cursor
+    cur = con.cursor()
 
-        # Normalizing column letters to int list indexes
-        for i in range(len(columns)):
-            columns[i]['column_index'] = column_index_from_string(columns[i]['column_index'])
+    # Creating main table
+    cur.execute('CREATE TABLE objects ('
+                'id   INTEGER PRIMARY KEY AUTOINCREMENT,'
+                '{},'
+                'obj_place INTEGER,'
+                'FOREIGN KEY (obj_place) REFERENCES places (id)'
+                ');'.format(",".join([str(columns[column]) + " STRING" for column in columns.keys()])))
 
-        # Creating main table
-        cur.execute('CREATE TABLE objects ('
-                    'id   INTEGER PRIMARY KEY AUTOINCREMENT,'
-                    '{});'.format(",".join([str(column["column_name"]) + " STRING" for column in columns])))
+    # Creating places history table
+    cur.execute('CREATE TABLE history ('
+                'id       INTEGER PRIMARY KEY AUTOINCREMENT,'
+                'place_id INTEGER,'
+                'date     DATETIME,'
+                'obj_id   INTEGER,'
+                'FOREIGN KEY (obj_id) REFERENCES objects (id),'
+                'FOREIGN KEY (place_id) REFERENCES places (id));')
 
-        # Adding data
-        for row in sheet.rows:
-            if take_rows_with_id_only:
-                if not str(row[0].value).isdigit():
-                    continue
-            cur.execute('''INSERT INTO objects({})
-                           VALUES({})'''.format(','.join([column['column_name'] for column in columns]),
-                                                ','.join(["'" + str(row[i['column_index'] - 1].value) + "'"
-                                                          for i in columns])))
-        con.commit()
-        con.close()
-        wb.close()
+    # Creating places table
+    cur.execute('CREATE TABLE places ('
+                'id   INTEGER PRIMARY KEY AUTOINCREMENT,'
+                'text STRING);')
 
-    except Exception as e:
-        return e
+    # Creating update trigger that sets last place to objects when history table updates
+    cur.execute(
+        'CREATE TRIGGER UpdateTrigger AFTER INSERT ON '
+        'history BEGIN UPDATE objects SET obj_place = (NEW.place_id)'
+        'WHERE objects.id = NEW.obj_id; END;')
+
+    # Adding data
+    for row in sheet.rows:
+        if take_rows_with_id_only:
+            if not str(row[0].value).isdigit():
+                continue
+        cur.execute('''INSERT INTO objects({})
+                       VALUES({})'''.format(','.join(columns.values()),
+                                            ','.join(["'" + str(row[column_index_from_string(i) - 1].value) + "'"
+                                                      for i in columns.keys()])))
+    con.commit()
+    con.close()
+    wb.close()
 
 
-# import os
-# os.remove('inventory_new.db')
+
+
+import os
+
+os.remove('db/inventory_new.db')
 print(convert_from_xlsx_to_sqlite('inventory_old.xlsx', 'стр.2',
-                                  'inventory_new.db',
-                                  ({'column_index': 'G', 'column_name': 'name'},
-                                   {'column_index': 'H', 'column_name': 'number'})))
+                                  'db/inventory_new.db',
+                                  ({'G': 'name',
+                                    'H': 'serial_number'})))
