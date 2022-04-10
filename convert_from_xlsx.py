@@ -2,6 +2,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string
 import sqlite3
 
+
 def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_rows_with_id_only=True):
     # Loading a workbook and required sheet
     wb = load_workbook(xlsx_name, read_only=True)
@@ -27,7 +28,7 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
                 'place_id INTEGER,'
                 'date     DATETIME,'
                 'obj_id   INTEGER,'
-                'FOREIGN KEY (obj_id) REFERENCES objects (id),'
+                'FOREIGN KEY (obj_id) REFERENCES objects (id) ON DELETE CASCADE,'
                 'FOREIGN KEY (place_id) REFERENCES places (id));')
 
     # Creating places table
@@ -53,8 +54,6 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
     con.commit()
     con.close()
     wb.close()
-
-
 
 
 import os
