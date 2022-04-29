@@ -5,6 +5,8 @@ blueprint = Blueprint(
     __name__,
     template_folder='templates'
 )
+
 from . import objects_api
 from . import history_api
 from . import places_api
+from . import qr_api

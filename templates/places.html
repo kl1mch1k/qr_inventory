@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center"> Места </h2>
+{% if current_user.is_authenticated %}
+<div>
+    <a href="add_place" class="btn btn-secondary">Добавить место</a>
+    <a href="/" class="btn btn-secondary">Просмотр объектов</a>
+</div>
+{% endif %}
+{% for place in places %}
+<h2> Место с id {{ place[0].id }} </h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p>
+                Место
+            </p>
+        </div>
+        <div class="col">
+            <p>
+                Связанные объекты
+            </p>
+        </div>
+    </div><!--/row-->
+    <div class="row">
+        <div class="col">
+            <p>
+                {{ place[0].text }}
+            </p>
+        </div>
+        <div class="col">
+            {% for obj in place[1] %}
+            <p>
+                {{ obj }}
+            </p>
+            {% endfor %}
+        </div>
+    </div><!--/row-->
+</div><!--container-->
+{% if current_user.is_authenticated%}
+<div>
+    <a href="/places/{{ place[0].id }}" class="btn btn-outline-warning">
+        Изменить
+    </a>
+    <a href="/places_delete/{{  place[0].id }}" class="btn btn-outline-danger">
+        Удалить
+    </a>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}

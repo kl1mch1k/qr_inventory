@@ -11,4 +11,4 @@ class Object(SqlAlchemyBase, SerializerMixin):
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     serial_number = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     obj_place = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('places.id'),
-                              nullable=True)
+                                  nullable=True)

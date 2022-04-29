@@ -10,10 +10,11 @@ class History(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'history'
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    place_id = sqlalchemy.Column(sqlalchemy.Integer,
-                                 sqlalchemy.ForeignKey('places.id'))
+    old_place_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                     sqlalchemy.ForeignKey('places.id'))
+    new_place_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                     sqlalchemy.ForeignKey('places.id'))
     date = sqlalchemy.Column(sqlalchemy.DateTime,
-                                      default=datetime.datetime.now)
+                             default=datetime.datetime.now)
     obj_id = sqlalchemy.Column(sqlalchemy.Integer,
-                                 sqlalchemy.ForeignKey('objects.id'))
-
+                               sqlalchemy.ForeignKey('objects.id'))

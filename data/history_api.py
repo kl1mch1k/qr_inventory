@@ -9,7 +9,7 @@ from .api_blueprint import blueprint
 
 
 @blueprint.route('/api/history', methods=['GET'])
-def get_history():
+def get_histories():
     db_sess = db_session.create_session()
     history = db_sess.query(History).all()
     return jsonify({

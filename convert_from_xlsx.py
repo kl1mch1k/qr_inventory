@@ -25,11 +25,13 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
     # Creating places history table
     cur.execute('CREATE TABLE history ('
                 'id       INTEGER PRIMARY KEY AUTOINCREMENT,'
-                'place_id INTEGER,'
+                'old_place_id INTEGER,'
+                'new_place_id INTEGER,'
                 'date     DATETIME,'
                 'obj_id   INTEGER,'
                 'FOREIGN KEY (obj_id) REFERENCES objects (id) ON DELETE CASCADE,'
-                'FOREIGN KEY (place_id) REFERENCES places (id));')
+                'FOREIGN KEY (new_place_id) REFERENCES places (id),'
+                'FOREIGN KEY (old_place_id) REFERENCES places (id));')
 
     # Creating places table
     cur.execute('CREATE TABLE places ('
@@ -39,8 +41,14 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
     # Creating update trigger that sets last place to objects when history table updates
     cur.execute(
         'CREATE TRIGGER UpdateTrigger AFTER INSERT ON '
-        'history BEGIN UPDATE objects SET obj_place = (NEW.place_id)'
+        'history BEGIN UPDATE objects SET obj_place = (NEW.new_place_id)'
         'WHERE objects.id = NEW.obj_id; END;')
+
+    cur.execute(
+        'CREATE TABLE users ('
+        'id              INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'email           STRING,'
+        'hashed_password STRING);')
 
     # Adding data
     for row in sheet.rows:

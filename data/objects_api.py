@@ -18,7 +18,7 @@ def get_objects():
 
 
 @blueprint.route('/api/objects/<int:obj_id>', methods=['GET'])
-def get_one_objects(obj_id):
+def get_one_object(obj_id):
     db_sess = db_session.create_session()
     object = db_sess.query(Object).get(obj_id)
     if not object:

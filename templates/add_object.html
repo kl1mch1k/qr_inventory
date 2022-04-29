@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1> Изменение объекта </h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.name.label }}<br>
+        {{ form.name(class="form-control") }}<br>
+        {% for error in form.name.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.serial_number.label }}<br>
+        {{ form.serial_number(class="form-control") }}<br>
+        {% for error in form.serial_number.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.obj_place.label }}<br>
+        {{ form.obj_place(class="form-control") }}<br>
+        {% for error in form.obj_place.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+</form>
+{% endblock %}

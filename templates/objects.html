@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center"> Объекты </h2>
+{% if current_user.is_authenticated %}
+<div>
+    <a href="add_object" class="btn btn-secondary">Добавить объект</a>
+    <a href="places" class="btn btn-secondary">Просмотр мест</a>
+    <a href="download_qr" class="btn btn-secondary">Скачать qr коды</a>
+</div>
+{% endif %}
+{% for obj in objects %}
+<h2> Объект с id {{ obj.id }} </h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p>
+                Наименование
+            </p>
+        </div>
+        <div class="col">
+            <p>
+                Инв. №
+            </p>
+        </div>
+        <div class="col">
+            <p>
+                Место
+            </p>
+        </div>
+    </div><!--/row-->
+    <div class="row">
+        <div class="col">
+            <p>
+                {{ obj.name }}
+            </p>
+        </div>
+        <div class="col">
+            <p>
+                {{ obj.serial_number }}
+            </p>
+        </div>
+        <div class="col">
+            {% if places.get(obj.obj_place) %}
+            <p>
+                {{ places.get(obj.obj_place).text }}
+            </p>
+            {% else %}
+            <p>
+                Не указано
+            </p>
+            {% endif %}
+
+
+        </div>
+    </div><!--/row-->
+</div><!--container-->
+{% if current_user.is_authenticated%}
+<div>
+    <a href="/object/{{ obj.id }}" class="btn btn-outline-warning">
+        Изменить
+    </a>
+    <a href="/object_delete/{{ obj.id }}" class="btn btn-outline-danger">
+        Удалить
+    </a>
+    <a href="/object_history/{{ obj.id }}" class="btn btn-outline-info">
+        История
+    </a>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}
