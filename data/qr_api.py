@@ -49,7 +49,7 @@ def get_xlsx_qr():
 
     count = 2
     for obj in objects:
-        qr = qrcode.make(obj.serial_number)
+        qr = qrcode.make(f'{obj.id}${obj.name}${obj.serial_number}${obj.obj_place}')
         qr.thumbnail((75, 75), Image.ANTIALIAS)
         qr.save(f'temp/temp{str(count)}.png')
         img = openpyxl.drawing.image.Image(f'temp/temp{str(count)}.png')
