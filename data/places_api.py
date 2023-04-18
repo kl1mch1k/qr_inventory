@@ -25,9 +25,10 @@ def get_one_place(id):
     place = db_sess.query(Place).get(id)
     if not place:
         return jsonify({'error': 'Not found'})
+
     return jsonify(
         {
-            'places': place.to_dict()
+            'places': dict([(str(i), str(j)) for i, j in place.to_dict().items()])
         }
     )
 
