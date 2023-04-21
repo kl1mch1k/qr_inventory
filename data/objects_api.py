@@ -25,9 +25,15 @@ def get_one_object(obj_id):
     object = db_sess.query(Object).get(obj_id)
     if not object:
         return jsonify({'error': 'Not found'})
+    object = object.to_dict()
+    if object['obj_place']:
+        object['obj_place_text'] = db_sess.query(Place).get(object['obj_place']).text
+    else:
+        object['obj_place_text'] = None
+
     return jsonify(
         {
-            'objects': object.to_dict()
+            'objects': object
         }
     )
 
