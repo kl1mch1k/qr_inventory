@@ -12,10 +12,17 @@ from .places import Place
 def get_objects():
     db_sess = db_session.create_session()
     objects = db_sess.query(Object).all()
+    for i in range(len(objects)):
+        object = objects[i].to_dict()
+        if object['obj_place']:
+            object['obj_place_text'] = db_sess.query(Place).get(object['obj_place']).text
+        else:
+            object['obj_place_text'] = None
+        objects[i] = dict([(i, str(j)) for i, j in object.items()])
+
     return jsonify({
         'objects':
-            [item.to_dict()
-             for item in objects]
+            objects
     })
 
 
@@ -33,7 +40,7 @@ def get_one_object(obj_id):
 
     return jsonify(
         {
-            'objects': object
+            'objects': dict([(i, str(j)) for i, j in object.items()])
         }
     )
 
