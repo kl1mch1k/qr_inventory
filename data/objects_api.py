@@ -14,7 +14,7 @@ def get_objects():
     objects = db_sess.query(Object).all()
     for i in range(len(objects)):
         object = objects[i].to_dict()
-        if object['obj_place']:
+        if object.get('obj_place'):
             object['obj_place_text'] = db_sess.query(Place).get(object['obj_place']).text
         else:
             object['obj_place_text'] = None
