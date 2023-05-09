@@ -10,13 +10,13 @@ from forms.object_form import ObjForm
 from flask_app import app
 
 
-@app.route('/')
-def all_objects():
+@app.route('/<int:id>')
+def all_objects(id):
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
-        objects = db_sess.query(Object)
+        objects = db_sess.query(Object).filter(Object.obj_place == id)
         places = db_sess.query(Place)
-        return render_template("objects.html", objects=objects, places=places)
+        return render_template("main_page.html", objects=objects, places=places, title='QR-inventory')
     else:
         return redirect('/login')
 
@@ -36,7 +36,7 @@ def add_object():
         db_sess.add(obj)
         db_sess.commit()
         return redirect('/')
-    return render_template('add_object.html', title='Добавление объекта', form=form)
+    return render_template('add_object.html', title='Добавление объекта', form=form, editing=False)
 
 
 @app.route('/object/<int:id>', methods=['GET', 'POST'])
@@ -78,7 +78,9 @@ def edit_object(id):
         return redirect('/')
     return render_template('add_object.html',
                            title='Редактирование',
-                           form=form
+                           form=form,
+                           obj_id=obj.id,
+                           editing=True
                            )
 
 

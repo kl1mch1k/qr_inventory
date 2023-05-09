@@ -1,6 +1,7 @@
+import sqlite3
+
 from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string
-import sqlite3
 
 
 def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_rows_with_id_only=True):
@@ -49,6 +50,11 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
         'id              INTEGER PRIMARY KEY AUTOINCREMENT,'
         'email           STRING,'
         'hashed_password STRING);')
+
+    cur.execute(
+        'CREATE TABLE user_responsibility ('
+        'user_id         INTEGER ,'
+        'obj_id          INTEGER);')
 
     # Adding data
     for row in sheet.rows:

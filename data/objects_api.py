@@ -1,24 +1,25 @@
 from flask import jsonify, request
+from flask_login import login_required
 
 from . import db_session
+from .api_blueprint import blueprint
 from .history import History
 from .objects import Object
-
-from .api_blueprint import blueprint
 from .places import Place
 
 
 @blueprint.route('/api/objects', methods=['GET'])
+@login_required
 def get_objects():
     db_sess = db_session.create_session()
     objects = db_sess.query(Object).all()
     for i in range(len(objects)):
-        object = objects[i].to_dict()
-        if object.get('obj_place'):
-            object['obj_place_text'] = db_sess.query(Place).get(object['obj_place']).text
+        obj = objects[i].to_dict()
+        if obj.get('obj_place'):
+            obj['obj_place_text'] = db_sess.query(Place).get(obj['obj_place']).text
         else:
-            object['obj_place_text'] = None
-        objects[i] = dict([(i, str(j)) for i, j in object.items()])
+            obj['obj_place_text'] = None
+        objects[i] = dict([(i, str(j)) for i, j in obj.items()])
 
     return jsonify({
         'objects':
@@ -73,6 +74,7 @@ def delete_object(obj_id):
     db_sess.commit()
     return jsonify({'success': 'OK'})
 
+
 @blueprint.route('/api/objects/<int:obj_id>', methods=['PATCH'])
 def patch_object(obj_id):
     if not request.json:
@@ -94,4 +96,3 @@ def patch_object(obj_id):
         return jsonify({'success': 'OK'})
     else:
         return jsonify({'error': 'Unknown object ID'})
-

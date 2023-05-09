@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="main_container">
+        <div class="places">
+            <input class="form-control" id="placesSearch" type="text" placeholder="Поиск локации">
+            <ul class="list-group" id="placesList">
+                {% for place in places %}
+                    <li class="list-group-item">{{ place.text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="objects">
+            <table class="table table-bordered" id="objTable">
+                <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Инв. №</th>
+                    <th>Локация</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in objects %}
+                    <tr>
+                        <td><a href="/object/{{ obj.id }}"> {{ obj.name }} </a></td>
+                        <td> {{ obj.serial_number }} </td>
+                        {% if places.get(obj.obj_place) %}
+                            <td> {{ places.get(obj.obj_place).text }} </td>
+                        {% else %}
+                            <td> Не указано</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+            <i class="fa fa-arrow-up"></i>
+        </button>
+        <script>//Get the button
+        let mybutton = document.getElementById("btn-back-to-top");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+            scrollFunction();
+        };
+
+        function scrollFunction() {
+            if (
+                document.body.scrollTop > 20 ||
+                document.documentElement.scrollTop > 20
+            ) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        mybutton.addEventListener("click", backToTop);
+
+        function backToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+        </script>
+
+    </div>
+{% endblock %}
