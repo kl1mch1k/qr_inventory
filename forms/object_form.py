@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, SelectField
-from wtforms.validators import DataRequired
+from wtforms import SubmitField, StringField, SelectField, FileField
+from wtforms.validators import DataRequired, Optional
 
 from data import db_session
 from data.places import Place
@@ -17,4 +17,5 @@ class ObjForm(FlaskForm):
     obj_responsible = SelectField('Ответсвенный', choices=([(None, 'Не указано')] +
                                                            [(user.id, user.name) for user in
                                                             db_session.create_session().query(
-                                                                User).filter(User.role != 1)]))
+                                                                User).filter(User.role != 1)]), validators=[Optional()])
+    image = FileField('Загрузить изображение', validators=[Optional()])

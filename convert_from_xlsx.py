@@ -21,6 +21,7 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
                 '{},'
                 'obj_place INTEGER,'
                 'responsible_id INTEGER,'
+                'checked INTEGER default 1,'
                 'FOREIGN KEY (obj_place) REFERENCES places (id),'
                 'FOREIGN KEY (responsible_id) REFERENCES users (id)'
                 ');'.format(",".join([str(columns[column]) + " STRING" for column in columns.keys()])))

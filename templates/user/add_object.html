@@ -33,6 +33,15 @@
                         {{ error }}
                     </div>
                 {% endfor %}
+
+            <p>
+                {{ form.image.label }}<br>
+                {{ form.image(class="form-control") }}
+                {% for error in form.obj_place.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
             <div class="btn-group" role="group">
                 {{ form.submit(type="submit", class="btn btn-outline-primary") }}
                 {% if editing == True %}

@@ -76,6 +76,10 @@ def admin_edit_object(id):
     form.obj_place.choices = [(str(i), str(i)) for i in (['Не указано'] +
                                                          [place.text for place in
                                                           db_session.create_session().query(Place).all()])]
+    form.obj_responsible.choices=[(None, 'Не указано')] + [(user.id, user.name) for user in
+                                                            db_session.create_session().query(
+                                                                User).filter(User.role != 1)]
+
     if request.method == "GET":
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()

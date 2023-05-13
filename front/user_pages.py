@@ -7,6 +7,7 @@ from flask import render_template, request, abort, send_file, jsonify
 from flask_login import login_required, current_user
 from openpyxl.styles import Alignment
 from werkzeug.utils import redirect
+
 # from data.qr_api import
 from data import db_session
 from data.history import History
@@ -38,13 +39,14 @@ def place_objects(id):
     places = db_sess.query(Place)
     return render_template("user/main_page.html", objects=objects, places=places, title='QR-inventory')
 
-@app.route('/download_qr' , methods=['GET', 'POST'])
+
+@app.route('/download_qr', methods=['GET', 'POST'])
 @login_required
 def user_download_qr():
     form = QrForm()
     form.places.choices = ([(0, 'Все')] + [(place.id, place.text) for place in
-                                                                        db_session.create_session().query(
-                                                                            Place).all()])
+                                           db_session.create_session().query(
+                                               Place).all()])
     if form.validate_on_submit():
         wb = openpyxl.Workbook()
         ws = wb.worksheets[0]
@@ -101,6 +103,7 @@ def user_download_qr():
     # else:
     #     return redirect('/login')
 
+
 # @app.route('/add_object', methods=['GET', 'POST'])
 # @login_required
 # def add_object():
@@ -129,9 +132,9 @@ def edit_object(id):
     if request.method == "GET":
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()
-        if str(obj.responsible_id) != str(current_user.id):
-            return jsonify({'error': f"{current_user.email} hasn't got enough rights"})
         if obj:
+            if str(obj.responsible_id) != str(current_user.id):
+                return jsonify({'error': f"{current_user.email} hasn't got enough rights"})
             if db_sess.query(Place).get(obj.obj_place):
                 form = ObjForm(obj_place=db_sess.query(Place).get(obj.obj_place).text)
                 form.obj_place.choices = [(str(i), str(i)) for i in (['Не указано'] +
@@ -140,20 +143,23 @@ def edit_object(id):
             form.name.data = obj.name
             form.serial_number.data = obj.serial_number
 
+
         else:
             abort(404)
     if form.validate_on_submit():
+        print(form.image.data)
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()
         if obj:
-            history = History(old_place_id=obj.obj_place,
-                              obj_id=obj.id)
             obj.name = form.name.data
             obj.serial_number = form.serial_number.data
             if form.obj_place.data != 'Не указано':
                 obj.obj_place = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
-                history.new_place_id = obj.obj_place
-            db_sess.add(history)
+            if form.obj_place != obj.obj_place:
+                history = History(old_place_id=obj.obj_place,
+                                  obj_id=obj.id,
+                                  new_place_id=obj.obj_place)
+                db_sess.add(history)
             db_sess.commit()
         else:
             abort(404)
@@ -161,7 +167,6 @@ def edit_object(id):
     return render_template('user/add_object.html',
                            title='Редактирование',
                            form=form,
-                           obj_id=obj.id,
                            editing=True
                            )
 
