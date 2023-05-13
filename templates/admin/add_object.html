@@ -6,8 +6,10 @@
     {#    {% else %}#}
     {#        <h1> Добавление объекта </h1>#}
     {#    {% endif %}#}
-    <div class="mx-auto obj_form_container">
-        <form action="" method="post" class="obj_form">
+    {% if img == True %}
+    <div class="mx-auto img_form_container">
+        <img src="../../api/objects/image/{{ obj_id }}" alt="" class="obj_image">
+        <form action="" method="post" class="obj_form" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.name.label }}<br>
@@ -44,7 +46,14 @@
                         {{ error }}
                     </div>
                 {% endfor %}
-            </p>
+            <p>
+                {{ form.image.label }}<br>
+                {{ form.image(class="form-control") }}
+                {% for error in form.image.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
             <div class="btn-group" role="group">
                 {{ form.submit(type="submit", class="btn btn-outline-primary") }}
                 {% if editing == True %}
@@ -54,5 +63,61 @@
             </div>
         </form>
     </div>
-
+    {% else %}
+    <div class="mx-auto form_container">
+        <form action="" method="post" class="obj_form" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.name.label }}<br>
+                {{ form.name(class="form-control") }}
+                {% for error in form.name.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.serial_number.label }}<br>
+                {{ form.serial_number(class="form-control") }}
+                {% for error in form.serial_number.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.obj_place.label }}<br>
+                {{ form.obj_place(class="form-control") }}
+                {% for error in form.obj_place.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.obj_responsible.label }}<br>
+                {{ form.obj_responsible(class="form-control") }}
+                {% for error in form.obj_place.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            <p>
+                {{ form.image.label }}<br>
+                {{ form.image(class="form-control") }}
+                {% for error in form.image.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            <div class="btn-group" role="group">
+                {{ form.submit(type="submit", class="btn btn-outline-primary") }}
+                {% if editing == True %}
+                    <a href="/object_delete/{{ obj_id }}" class="btn btn-outline-danger">Удалить</a>
+                    <a href="/object_history/{{ obj_id }}" class="btn btn-outline-info">История</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    {% endif %}
 {% endblock %}

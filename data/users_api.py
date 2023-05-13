@@ -19,7 +19,8 @@ def user_get_places():
         return jsonify({'places': [place.text for place in places]})
     user_places = set()
     for obj in db_sess.query(Object).filter(Object.responsible_id==current_user.id):
-        user_places.add(places.get(obj.obj_place).text)
+        if places.get(obj.obj_place):
+            user_places.add(places.get(obj.obj_place).text)
     return jsonify({'places':list(user_places)})
 # @app.route("/protected", methods=["GET"])
 # @jwt_required()

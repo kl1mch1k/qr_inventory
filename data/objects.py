@@ -17,6 +17,7 @@ class Object(SqlAlchemyBase, SerializerMixin):
     checked = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
 
 
+
     def appoint_responsible(self, user_id):
         self.responsible_id = user_id
 

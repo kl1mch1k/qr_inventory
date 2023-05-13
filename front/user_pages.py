@@ -26,7 +26,12 @@ def all_objects():
     db_sess = db_session.create_session()
     objects = db_sess.query(Object).filter(Object.responsible_id == current_user.id)
     places = db_sess.query(Place)
-    return render_template("user/main_page.html", objects=objects, places=places, title='QR-inventory')
+    user_places = set()
+    for obj in db_sess.query(Object).filter(Object.responsible_id == current_user.id):
+        if places.get(obj.obj_place):
+            user_places.add(places.get(obj.obj_place).id)
+    user_places = places.filter(Place.id.in_(list(user_places)))
+    return render_template("user/main_page.html", objects=objects, user_places=user_places, places=places, title='QR-inventory')
 
 
 @app.route('/<int:id>')
@@ -35,9 +40,14 @@ def place_objects(id):
     if current_user.is_admin():
         return redirect('/admin')
     db_sess = db_session.create_session()
-    objects = db_sess.query(Object).filter(Object.obj_place == id, Object.responsible_id == current_user.id)
     places = db_sess.query(Place)
-    return render_template("user/main_page.html", objects=objects, places=places, title='QR-inventory')
+    user_places = set()
+    for obj in db_sess.query(Object).filter(Object.responsible_id == current_user.id):
+        if places.get(obj.obj_place):
+            user_places.add(places.get(obj.obj_place).id)
+    user_places = places.filter(Place.id.in_(list(user_places)))
+    objects = db_sess.query(Object).filter(Object.obj_place == id, Object.responsible_id == current_user.id)
+    return render_template("user/main_page.html",user_places=user_places, objects=objects, places=places, title='QR-inventory')
 
 
 @app.route('/download_qr', methods=['GET', 'POST'])
@@ -149,27 +159,30 @@ def edit_object(id):
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()
-        # form.image.data.save(f'images/{obj.id}')
         if obj:
             file = form.image.data
             if file:
-                file.save(f'images/{obj.id}.{file.filename.split(".")[1]}')
+                file.save(f'images/{obj.id}.jpg')
             obj.name = form.name.data
             obj.serial_number = form.serial_number.data
-            if form.obj_place.data != 'Не указано':
-                obj.obj_place = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
-            if form.obj_place != obj.obj_place:
+            if str(form.obj_place.data) != str(obj.obj_place):
+                new_place_id = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
                 history = History(old_place_id=obj.obj_place,
                                   obj_id=obj.id,
-                                  new_place_id=obj.obj_place)
+                                  new_place_id=new_place_id)
                 db_sess.add(history)
+                obj.obj_place = new_place_id
             db_sess.commit()
         else:
             abort(404)
         return redirect('/')
-    return render_template('user/add_object.html',
+    if str(obj.id) in [i.split('.')[0] for i in os.listdir('images')]:
+        img = True
+    else:
+        img = False
+    return render_template('user/add_object.html', img=img,
                            title='Редактирование',
-                           form=form,
+                           form=form, obj_id=obj.id,
                            editing=True
                            )
 

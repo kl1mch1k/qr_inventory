@@ -1,4 +1,5 @@
 import base64
+import os
 
 import requests
 from flask import render_template, request, abort, send_file
@@ -58,6 +59,9 @@ def admin_add_object():
         db_sess = db_session.create_session()
         obj = Object(name=form.name.data,
                      serial_number=form.serial_number.data)
+        file = form.image.data
+        if file:
+            file.save(f'images/{str(int(db_sess.query(Object).all()[-1].id) + 1)}.jpg')
         if form.obj_place.data != 'Не указано':
             obj.obj_place = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
             if form.obj_responsible.data:
@@ -76,9 +80,9 @@ def admin_edit_object(id):
     form.obj_place.choices = [(str(i), str(i)) for i in (['Не указано'] +
                                                          [place.text for place in
                                                           db_session.create_session().query(Place).all()])]
-    form.obj_responsible.choices=[(None, 'Не указано')] + [(user.id, user.name) for user in
-                                                            db_session.create_session().query(
-                                                                User).filter(User.role != 1)]
+    form.obj_responsible.choices = [(None, 'Не указано')] + [(user.id, user.name) for user in
+                                                             db_session.create_session().query(
+                                                                 User).filter(User.role != 1)]
 
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -86,7 +90,7 @@ def admin_edit_object(id):
         if obj:
             file = form.image.data
             if file:
-                file.save(f'images/{obj.id}.{file.filename.split(".")[1]}')
+                file.save(f'images/{obj.id}.jpg')
             if db_sess.query(Place).get(obj.obj_place):
                 form = ObjForm(obj_place=db_sess.query(Place).get(obj.obj_place).text)
                 form.obj_place.choices = [(str(i), str(i)) for i in (['Не указано'] +
@@ -102,23 +106,29 @@ def admin_edit_object(id):
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()
         if obj:
-
+            file = form.image.data
+            if file:
+                file.save(f'images/{obj.id}.jpg')
             obj.name = form.name.data
             obj.serial_number = form.serial_number.data
             if form.obj_responsible.data != 'None':
                 obj.responsible_id = form.obj_responsible.data
-            if form.obj_place.data != 'Не указано':
-                obj.obj_place = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
-            if form.obj_place != obj.obj_place:
+            if str(form.obj_place.data) != str(obj.obj_place):
+                new_place_id = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
                 history = History(old_place_id=obj.obj_place,
                                   obj_id=obj.id,
-                                  new_place_id=obj.obj_place)
+                                  new_place_id=new_place_id)
                 db_sess.add(history)
+                obj.obj_place = new_place_id
             db_sess.commit()
         else:
             abort(404)
         return redirect('/admin')
-    return render_template('admin/add_object.html',
+    if str(obj.id) in [i.split('.')[0] for i in os.listdir('images')]:
+        img = True
+    else:
+        img = False
+    return render_template('admin/add_object.html', img=img,
                            title='Редактирование',
                            form=form,
                            obj_id=obj.id,

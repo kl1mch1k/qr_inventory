@@ -1,13 +1,33 @@
 {% extends "admin/base.html" %}
 
+
 {% block content %}
-    {#    {% if editing == True %}#}
-    {#        <h1> Изменение объекта </h1>#}
-    {#    {% else %}#}
-    {#        <h1> Добавление объекта </h1>#}
-    {#    {% endif %}#}
-    <div class="mx-auto obj_form_container">
-
+    <div class="mx-auto form_container">
+        <form action="" method="post" class="obj_form">
+            {{ form.hidden_tag() }}
+            {{ form.places.label }}<br>
+            {{ form.places(class="form-control") }}
+            {% for error in form.places.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+            <div class="btn-group" role="group">
+                {{ form.submit(type="submit", class="btn btn-outline-primary") }}
+            </div>
+        </form>
     </div>
-
+    <script>var checkbox = document.getElementById("places-0")
+    var checkBoxes = document.querySelectorAll('input[name=places]');
+    checkbox.addEventListener('change', function () {
+        if (this.checked) {
+            for (index = 0, len = checkBoxes.length; index < len; ++index) {
+                checkBoxes[index].checked = true;
+            }
+        } else {
+            for (index = 0, len = checkBoxes.length; index < len; ++index) {
+                checkBoxes[index].checked = false;
+            }
+        }
+    });</script>
 {% endblock %}

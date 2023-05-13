@@ -6,7 +6,7 @@
         <input class="form-control" id="placesSearch" type="text" placeholder="Поиск локации">
         <ul class="list-group" id="placesList">
             <li class="list-group-item"><a href="/"> Все локации </a></li>
-            {% for place in places %}
+            {% for place in user_places %}
                 <li class="list-group-item"><a href="/{{ place.id }}"> {{ place.text }}</a></li>
             {% endfor %}
         </ul>

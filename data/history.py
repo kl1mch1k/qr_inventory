@@ -18,3 +18,6 @@ class History(SqlAlchemyBase, SerializerMixin):
                              default=datetime.datetime.now)
     obj_id = sqlalchemy.Column(sqlalchemy.Integer,
                                sqlalchemy.ForeignKey('objects.id'))
+
+    def get_date(self):
+        return str(self.date)[0:-7]

@@ -1,64 +1,31 @@
-{% extends "base.html" %}
+{% extends "user/base.html" %}
 
 {% block content %}
-<h2 align="center"> Просмотр истории объекта с наименованием "{{obj.name}}" </h2>
-{% if histories %}
-{% for hist in histories %}
-<h2> Запись с id {{ hist.id }} </h2>
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <p>
-                Дата
-            </p>
-        </div>
-        <div class="col">
-            <p>
-                Старое место
-            </p>
-        </div>
-        <div class="col">
-            <p>
-                Новое место
-            </p>
-        </div>
-    </div><!--/row-->
-    <div class="row">
-        <div class="col">
-            <p>
-                {{ hist.date }}
-            </p>
-        </div>
-        <div class="col">
-            {% if places.get(hist.old_place_id) %}
-            <p>
-                {{ places.get(hist.old_place_id).text }}
-            </p>
-            {% else %}
-            <p>
-                Не указано
-            </p>
-            {% endif %}
+    {% if histories %}
+        <div class="history">
+            <table class="table table-bordered" id="histTable">
+                <thead>
+                <tr>
+                    <th>Старое место</th>
+                    <th>Новое место</th>
+                    <th>Время</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for hist in histories %}
+                    <tr>
+                        <td> {{ places.get(hist.old_place_id).text }}</td>
+                        <td> {{ places.get(hist.new_place_id).text }}</td>
+                        <td> {{ hist.get_date() }}</td>
 
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="col">
-            {% if places.get(hist.new_place_id) %}
-            <p>
-                {{ places.get(hist.new_place_id).text }}
-            </p>
-            {% else %}
-            <p>
-                Не указано
-            </p>
-            {% endif %}
-
-        </div>
-    </div><!--/row-->
-</div><!--container-->
-{% endfor %}
-{% else %}
-<h1 align="center">
-    Данные о перемещениях отстутствуют
-</h1>
-{% endif %}
+    {% else %}
+        <h1 align="center">
+            Данные о перемещениях отстутствуют
+        </h1>
+    {% endif %}
 {% endblock %}
