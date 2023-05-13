@@ -84,6 +84,9 @@ def admin_edit_object(id):
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()
         if obj:
+            file = form.image.data
+            if file:
+                file.save(f'images/{obj.id}.{file.filename.split(".")[1]}')
             if db_sess.query(Place).get(obj.obj_place):
                 form = ObjForm(obj_place=db_sess.query(Place).get(obj.obj_place).text)
                 form.obj_place.choices = [(str(i), str(i)) for i in (['Не указано'] +

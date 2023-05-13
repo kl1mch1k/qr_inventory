@@ -147,10 +147,13 @@ def edit_object(id):
         else:
             abort(404)
     if form.validate_on_submit():
-        print(form.image.data)
         db_sess = db_session.create_session()
         obj = db_sess.query(Object).filter(Object.id == id).first()
+        # form.image.data.save(f'images/{obj.id}')
         if obj:
+            file = form.image.data
+            if file:
+                file.save(f'images/{obj.id}.{file.filename.split(".")[1]}')
             obj.name = form.name.data
             obj.serial_number = form.serial_number.data
             if form.obj_place.data != 'Не указано':

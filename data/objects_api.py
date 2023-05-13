@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_login import login_required
 
@@ -51,6 +51,9 @@ def get_one_object(obj_id):
         }
     )
 
+@blueprint.route('/api/objects/image/<int:obj_id>', methods=['GET'])
+def get_image_object(obj_id):
+    return send_file('images/1.JPG')
 
 @blueprint.route('/api/objects', methods=['POST'])
 def create_objects():

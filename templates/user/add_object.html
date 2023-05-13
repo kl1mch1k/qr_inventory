@@ -6,8 +6,9 @@
     {#    {% else %}#}
     {#        <h1> Добавление объекта </h1>#}
     {#    {% endif %}#}
-    <div class="mx-auto obj_form_container">
-        <form action="" method="post" class="obj_form">
+    <div class="mx-auto obj_form_container" >
+        <img src="/api/objects/image/1" alt="">
+        <form action="" method="post" class="obj_form" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.name.label }}<br>
