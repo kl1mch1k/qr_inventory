@@ -1,0 +1,83 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="main_container">
+        <div class="places">
+            <input class="form-control" id="placesSearch" type="text" placeholder="Поиск локации">
+            <ul class="list-group" id="placesList">
+                <li class="list-group-item"><a href="/admin"> Все локации </a></li>
+                {% for place in places %}
+                    <li class="list-group-item"><a href="/admin/{{ place.id }}"> {{ place.text }}</a></li>
+                {% endfor %}
+            </ul>
+{#            <a id="add_place_button" class="btn btn-secondary btn-sm btn-block" href="/admin/add_object">Новая локация</a>#}
+        </div>
+        <div class="objects">
+            <table class="table table-bordered" id="objTable">
+                <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Инв. №</th>
+                    <th>Локация</th>
+                    {% if admin %}
+                        <th>Ответственный</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in objects %}
+                    <tr>
+                        <td><a href="/admin/object/{{ obj.id }}"> {{ obj.name }} </a></td>
+                        <td> {{ obj.serial_number }} </td>
+                        {% if places.get(obj.obj_place) %}
+                            <td> {{ places.get(obj.obj_place).text }} </td>
+                        {% else %}
+                            <td> -</td>
+                        {% endif %}
+                        {% if admin %}
+                            {% if obj.responsible_id %}
+                                <td> {{ users.get(obj.responsible_id).name }} </td>
+                            {% else %}
+                                <td> -</td>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{#        <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">#}
+{#            <i class="fa fa-arrow-up"></i>#}
+{#        </button>#}
+{#        <script>//Get the button#}
+{#        let mybutton = document.getElementById("btn-back-to-top");#}
+{#        window.addEventListener('DOMContentLoaded', (event) => {#}
+{#            let datatable = document.getElementById("objTable_wrapper");#}
+{#            datatable.onscroll = function () {#}
+{#                scrollFunction()#}
+{#            };#}
+{##}
+{#            function scrollFunction() {#}
+{#                if (#}
+{#                    datatable.scrollTop > 20#}
+{#                ) {#}
+{#                    mybutton.style.display = "block";#}
+{#                } else {#}
+{#                    mybutton.style.display = "none";#}
+{#                }#}
+{#            }#}
+{#        });#}
+{#        // When the user scrolls down 20px from the top of the document, show the button#}
+{##}
+{##}
+{#        // When the user clicks on the button, scroll to the top of the document#}
+{#        mybutton.addEventListener("click", backToTop);#}
+{##}
+{#        function backToTop() {#}
+{#            document.body.scrollTop = 0;#}
+{#            document.documentElement.scrollTop = 0;#}
+{#        }#}
+{#        </script>#}
+{##}
+{#    </div>#}
+{% endblock %}

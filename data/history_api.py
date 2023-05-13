@@ -3,9 +3,9 @@ import datetime
 from flask import jsonify, request
 
 from . import db_session
-from .history import History
-
 from .api_blueprint import blueprint
+from .history import History
+from .places import Place
 
 
 @blueprint.route('/api/history', methods=['GET'])
@@ -22,12 +22,27 @@ def get_histories():
 @blueprint.route('/api/history/<int:id>', methods=['GET'])
 def get_one_history(id):
     db_sess = db_session.create_session()
-    history = db_sess.query(History).get(id)
-    if not history:
-        return jsonify({'error': 'Not found'})
+    histories = db_sess.query(History).filter(History.obj_id == id)
+    out = []
+
+    if not histories:
+        return jsonify({'history': []})
+    for i in histories:
+        i = i.to_dict()
+        if i.get('old_place_id'):
+            i['old_place'] = db_sess.query(Place).get(i.get('old_place_id')).text
+        else:
+            i['old_place'] = None
+        del i['old_place_id']
+        if i.get('new_place_id'):
+            i['new_place'] = db_sess.query(Place).get(i.get('new_place_id')).text
+        else:
+            i['new_place'] = None
+        del i['new_place_id']
+        out.append(i)
     return jsonify(
         {
-            'history': history.to_dict()
+            'history': out
         }
     )
 

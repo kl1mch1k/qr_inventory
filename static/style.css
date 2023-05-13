@@ -1,19 +1,36 @@
-#btn-back-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    border-color: transparent;
-    color: #597da3;
-    background-color: transparent;
-    display: none;
+/*#btn-back-to-top {*/
+/*    position: fixed;*/
+/*    bottom: 20px;*/
+/*    right: 20px;*/
+/*    border-color: transparent;*/
+/*    color: #597da3;*/
+/*    background-color: transparent;*/
+/*    display: none;*/
+/*}*/
+li{
+    list-style-type:none;
 }
 
-.navbar-brand {
+
+#nav_d1 {
     color: #ffffff;
-    text-shadow: 1px 1px 2px black;
 }
-
+#nav_d2,
+#nav_d3{
+    text-shadow: unset;
+}
+.nav-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 3px #ACBED1;
+}
+.nav-link{
+    color: #ffffff;
+}
 .navbar-brand:hover {
+    color: #ffffff;
+    text-shadow: 0 0 3px #ACBED1;
+}
+.navbar-brand{
     color: #ffffff;
 }
 
@@ -33,41 +50,64 @@
 .places {
     background-color: #F0F0F0;
     height: calc(100vh - 70px);
-    padding: 10px;
+    padding: 15px;
     grid-area: places;
 }
 
 #placesSearch {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 #placesList {
-    max-height: calc(100vh - 140px);
-    overflow: scroll;
+    max-height: calc(100vh - 165px);
+    overflow-y: scroll;
 }
 
-/*#objTable{*/
-/*    padding: 15px;*/
-/*}*/
+#add_place_button{
+    /*height: 30px;*/
+    width: 100%;
+    padding: 1px;
+    margin-top: 15px;
+    outline-color: #c1c1c1;
+    background-color: #a4a4a4;
+    /*margin-bottom: 15px;*/
+}
+
+#objTable_wrapper{
+    padding: 20px;
+    max-height: calc(100vh - 70px);
+    overflow-y: scroll
+}
 
 .objects {
     /*padding: 0;*/
-    margin: 20px;
+    /*margin-left: 20px;*/
+    /*margin-top: 20px;*/
     grid-area: objects;
     /*padding-left: 10px ;*/
 }
 
-.form_container {
+.obj_form_container {
+    width: 25vw;
+    height: calc(100vh - 70px);
     padding: 15px;
     margin-left: 15px;
     margin-right: 15px;
     background-color: #F0F0F0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
 }
 
+.place_form_container {
+    width: 25vw;
+    height: calc(100vh - 70px);
+    padding: 15px;
+    margin-left: 15px;
+    margin-right: 15px;
+    background-color: #F0F0F0;
+}
 /*.main_block{*/
 /*    height: calc(100vh - 50px);*/
 /*}*/

@@ -20,7 +20,9 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
                 'id   INTEGER PRIMARY KEY AUTOINCREMENT,'
                 '{},'
                 'obj_place INTEGER,'
-                'FOREIGN KEY (obj_place) REFERENCES places (id)'
+                'responsible_id INTEGER,'
+                'FOREIGN KEY (obj_place) REFERENCES places (id),'
+                'FOREIGN KEY (responsible_id) REFERENCES users (id)'
                 ');'.format(",".join([str(columns[column]) + " STRING" for column in columns.keys()])))
 
     # Creating places history table
@@ -45,16 +47,18 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
         'history BEGIN UPDATE objects SET obj_place = (NEW.new_place_id)'
         'WHERE objects.id = NEW.obj_id; END;')
 
+    cur.execute('CREATE TABLE roles('
+                'id              INTEGER PRIMARY KEY AUTOINCREMENT,'
+                'name          STRING)')
     cur.execute(
         'CREATE TABLE users ('
         'id              INTEGER PRIMARY KEY AUTOINCREMENT,'
         'email           STRING,'
-        'hashed_password STRING);')
+        'name            STRING,'
+        'hashed_password STRING,'
+        'role INTEGER,'
+        'FOREIGN KEY (role) REFERENCES roles (id))')
 
-    cur.execute(
-        'CREATE TABLE user_responsibility ('
-        'user_id         INTEGER ,'
-        'obj_id          INTEGER);')
 
     # Adding data
     for row in sheet.rows:
@@ -64,7 +68,9 @@ def convert_from_xlsx_to_sqlite(xlsx_name, sheet_name, db_name, columns, take_ro
         cur.execute('''INSERT INTO objects({})
                        VALUES({})'''.format(','.join(columns.values()),
                                             ','.join(["'" + str(row[column_index_from_string(i) - 1].value) + "'"
+
                                                       for i in columns.keys()])))
+    cur.execute("INSERT INTO roles(name) VALUES('admin'),('employee')")
     con.commit()
     con.close()
     wb.close()

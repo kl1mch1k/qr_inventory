@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 
 {% block content %}
     {#    {% if editing == True %}#}
@@ -6,7 +6,7 @@
     {#    {% else %}#}
     {#        <h1> Добавление объекта </h1>#}
     {#    {% endif %}#}
-    <div class="mx-auto form_container">
+    <div class="mx-auto obj_form_container">
         <form action="" method="post" class="obj_form">
             {{ form.hidden_tag() }}
             <p>

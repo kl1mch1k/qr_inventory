@@ -27,8 +27,7 @@ def get_json_qr():
         qr.thumbnail((75, 75), Image.ANTIALIAS)
         qr = np.array(qr).tolist()
         data[obj.id] = {'qr': qr, 'name': obj.name,
-                        'serial_number': obj.serial_number,
-                        'place': places.get(obj.obj_place).text}
+                        'serial_number': obj.serial_number}
     return jsonify({
         'qr_codes': data
     })
@@ -49,7 +48,7 @@ def get_xlsx_qr():
 
     count = 2
     for obj in objects:
-        qr = qrcode.make(f'{obj.id}${obj.name}${obj.serial_number}${obj.obj_place}')
+        qr = qrcode.make(obj.serial_number)
         qr.thumbnail((75, 75), Image.ANTIALIAS)
         qr.save(f'temp/temp{str(count)}.png')
         img = openpyxl.drawing.image.Image(f'temp/temp{str(count)}.png')

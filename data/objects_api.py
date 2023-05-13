@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_login import login_required
 
 from . import db_session
@@ -6,13 +7,18 @@ from .api_blueprint import blueprint
 from .history import History
 from .objects import Object
 from .places import Place
+from .users import User
 
 
 @blueprint.route('/api/objects', methods=['GET'])
-@login_required
+@jwt_required()
 def get_objects():
     db_sess = db_session.create_session()
-    objects = db_sess.query(Object).all()
+    current_user = db_sess.query(User).filter(User.email==get_jwt_identity()).first()
+    if current_user.is_admin():
+        objects = db_sess.query(Object).all()
+    else:
+        objects = db_sess.query(Object).filter(Object.responsible_id==current_user.id).all()
     for i in range(len(objects)):
         obj = objects[i].to_dict()
         if obj.get('obj_place'):
@@ -92,6 +98,8 @@ def patch_object(obj_id):
             obj.obj_place = request.json['obj_place']
             history.new_place_id = request.json['obj_place']
             db_sess.add(history)
+        if request.json.get('checked'):
+            obj.checked = request.json['checked']
         db_sess.commit()
         return jsonify({'success': 'OK'})
     else:

@@ -13,22 +13,24 @@ def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('auth/register.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+            return render_template('auth/register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
-            email=form.email.data
+            email=form.email.data,
+            name=form.name.data,
+            role=2
         )
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('auth/register.html', title='Регистрация', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -41,10 +43,10 @@ def login():
             if user.check_password(form.password.data):
                 login_user(user, remember=form.remember_me.data)
                 return redirect("/")
-        return render_template('login.html',
+        return render_template('auth/login.html',
                                message="Неправильный логин или пароль",
                                form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+    return render_template('auth/login.html', title='Авторизация', form=form)
 
 
 @app.route('/logout')
