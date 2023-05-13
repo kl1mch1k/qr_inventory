@@ -27,6 +27,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     def is_admin(self):
         if str(self.role) == '1':
             return True
+        return False
 
 
 class Role(SqlAlchemyBase, SerializerMixin):
