@@ -14,7 +14,7 @@ class Object(SqlAlchemyBase, SerializerMixin):
                                   nullable=True)
     responsible_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'),
                                   nullable=True)
-    checked = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    checked = sqlalchemy.Column(sqlalchemy.Integer, nullable=True, default=1)
 
 
 
