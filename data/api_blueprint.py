@@ -11,3 +11,4 @@ from . import history_api
 from . import places_api
 from . import qr_api
 from . import login_api
+from . import users_api
