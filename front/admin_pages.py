@@ -113,7 +113,8 @@ def admin_edit_object(id):
             obj.serial_number = form.serial_number.data
             if form.obj_responsible.data != 'None':
                 obj.responsible_id = form.obj_responsible.data
-            if str(form.obj_place.data) != str(obj.obj_place):
+
+            if str(form.obj_place.data) != str(obj.obj_place) and str(form.obj_place.data) != 'Не указано':
                 new_place_id = db_sess.query(Place).filter(Place.text == form.obj_place.data).first().id
                 history = History(old_place_id=obj.obj_place,
                                   obj_id=obj.id,

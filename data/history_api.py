@@ -30,12 +30,12 @@ def get_one_history(id):
     for i in histories:
         i = i.to_dict()
         if i.get('old_place_id'):
-            i['old_place'] = db_sess.query(Place).get(i.get('old_place_id')).text
+            i['old_place'] = str(db_sess.query(Place).get(i.get('old_place_id')).text)
         else:
             i['old_place'] = None
         del i['old_place_id']
         if i.get('new_place_id'):
-            i['new_place'] = db_sess.query(Place).get(i.get('new_place_id')).text
+            i['new_place'] = str(db_sess.query(Place).get(i.get('new_place_id')).text)
         else:
             i['new_place'] = None
         del i['new_place_id']
